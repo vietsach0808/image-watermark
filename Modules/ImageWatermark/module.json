@@ -1,0 +1,13 @@
+{
+    "name": "ImageWatermark",
+    "alias": "imagewatermark",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ImageWatermark\\Providers\\ImageWatermarkServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
