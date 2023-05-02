@@ -42,13 +42,96 @@
             setTimeout(function () {
                 $('.image-box').css('height', parseInt($('.preview-img').height()) + 'px');
             }, 100);
-            $('#fontsize').change(function () {
+
+            $(document).on('change', '.font_size', function () {
                 $('.preview-text').css('font-size', $(this).val()+'px');
             });
-            $('.input-preview-text').keyup(function () {
+
+            $(document).on('keyup', '.horizontal', function () {
+                $('.preview-text').css('left', $(this).val()+'px');
+            });
+
+            $(document).on('keyup', '.vertical', function () {
+                $('.preview-text').css('top', $(this).val()+'px');
+            });
+
+            $(document).on('change', '.horizontal', function () {
+                $('.preview-text').css('left', $(this).val()+'px');
+            });
+
+            $(document).on('change', '.vertical', function () {
+                $('.preview-text').css('top', $(this).val()+'px');
+            });
+
+            $(document).on('keyup', '.input-preview-text', function () {
                 $('.preview-text').text($(this).val());
             });
+
+
+            $('.add_new_text').click(function () {
+                $(document).find('.row-content-image').removeClass('active');
+                $('.list-image-content').append(addNewText());
+                let current_row_content = $(document).find('.row-content-image.active');
+                $('.preview-text').css('font-size', current_row_content.find('.font_size').val()+'px');
+                $('.preview-text').text(current_row_content.find('.input-preview-text').val());
+                let x = current_row_content.find('.horizontal').val() + 'px';
+                let y = current_row_content.find('.vertical').val() + 'px';
+                $('.preview-text').css({"top": y, "left": x});
+            });
+
+            $(document).on('click', '.delete-content:not(.disabled)', function () {
+                let check_active = $(this).parents('.row-content-image.active');
+                $(this).parents('.row-content-image').remove();
+                if(check_active.length) {
+                    $(document).find('.row-content-image:first-child').addClass('active');
+                }
+            });
+
+            $(document).on('click', '.preview-content', function () {
+                $(document).find('.row-content-image').removeClass('active');
+                let current_row_content = $(this).parents('.row-content-image');
+                current_row_content.addClass('active');
+                $('.preview-text').css('font-size', current_row_content.find('.font_size').val()+'px');
+                $('.preview-text').text(current_row_content.find('.input-preview-text').val());
+                let x = current_row_content.find('.horizontal').val() + 'px';
+                let y = current_row_content.find('.vertical').val() + 'px';
+                $('.preview-text').css({"top": y, "left": x});
+            });
         });
+
+        function addNewText() {
+            return `
+            <div class="form-group row row-content-image active">
+                <div class="col-lg-3">
+                    <div>
+                        <button type="button" class="btn btn-secondary preview-content"> @lang('imagewatermark::iw.preview_button')</button>
+                        <button type="button" class="btn btn-danger delete-content"> @lang('imagewatermark::iw.delete')</button>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <select class="form-control font_size" name="font_size[]">
+                        @php
+                        $dataFontSize = old('font_size', isset($iwImage) ? $iwImage->font_size : 14);
+                        @endphp
+                        @foreach($listFontSize as $fontSize)
+                            <option value="{{$fontSize}}" @if($dataFontSize == $fontSize) selected @endif>{{$fontSize}}px</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-3">
+                    <input class="form-control input-preview-text" value="0123456789">
+                </div>
+                    <div class="col-lg-2">
+                    <input type="text" class="form-control horizontal" name="horizontal[]" value="0">
+                </div>
+                    <div class="col-lg-2">
+                    <input type="text" class="form-control vertical" name="vertical[]" value="0">
+                    <input type="hidden" class="form-control" name="background[]" value="0">
+                    <input type="hidden" class="form-control" name="image_content_id[]" value="0">
+                </div>
+            </div>
+            `;
+        }
 
         function deleteImage(form_id) {
             if(confirm("@lang('imagewatermark::iw.confirm_delete')")) {
@@ -85,6 +168,13 @@
                 return {'xp': x, 'yp': y};
             }
 
+            function preview(x, y) {
+                console.log(x + ' , ' + y);
+                $('.preview-text').css({"top": y, "left": x});
+                $(document).find('.row-content-image.active').find('.horizontal').val(x);
+                $(document).find('.row-content-image.active').find('.vertical').val(y);
+            }
+
             // Get X, Y coords, and displays Mouse coordinates
             function getCoords(e) {
                 var xy_pos = getXYpos(this);
@@ -117,10 +207,7 @@
 
                     // execute a function when click
                     document.getElementById(elmids[i]).onclick = function () {
-                        console.log(x + ' , ' + y);
-                        $('.preview-text').css({"top": y, "left": x});
-                        $('[name="horizontal"]').val(x);
-                        $('[name="vertical"]').val(y);
+                        preview(x, y);
                     };
                 }
             }
@@ -149,6 +236,9 @@
         .preview-text {
             position: absolute;
             color: #fff;
+        }
+        .disabled {
+            cursor: not-allowed;
         }
     </style>
 </head>

@@ -26,7 +26,8 @@ class ImageWatermarkController extends Controller
     public function index()
     {
         $imageList = $this->iwImageService->index();
-        return view('imagewatermark::index', compact('imageList'));
+        $listFontSize = $this->iwImageService->getListFontSize();
+        return view('imagewatermark::index', compact('imageList', 'listFontSize'));
     }
 
     /**
@@ -55,6 +56,7 @@ class ImageWatermarkController extends Controller
             return redirect(route('iw.index'))->with(['success' => __('imagewatermark::iw.success')]);
         } catch (\Exception $e) {
             DB::rollback();
+            dump($e);die;
             return redirect(route('iw.create'))->withErrors(__('imagewatermark::iw.error'));
         }
     }
@@ -98,6 +100,7 @@ class ImageWatermarkController extends Controller
             return redirect(route('iw.index'))->with(['success' => __('imagewatermark::iw.update_success')]);
         } catch (\Exception $e) {
             DB::rollback();
+            dump($e);die;
             return redirect(route('iw.edit', $id))->withErrors(__('imagewatermark::iw.error'));
         }
     }
@@ -135,7 +138,10 @@ class ImageWatermarkController extends Controller
     public function download(Request $request, $id)
     {
         $request->validate([
-            'title' => 'required|max:255',
+            'title' => 'required|array',
+            'color' => 'required|array',
+            'title.*' => 'required|max:255',
+            'color.*' => 'required|max:255',
         ], [
             'title.required' => __('imagewatermark::iw.title_required'),
         ]);
@@ -144,7 +150,7 @@ class ImageWatermarkController extends Controller
         if (!$iwImage) {
             return redirect(route('iw.index'))->withErrors(__('imagewatermark::iw.error'));
         }
-        $this->iwImageService->createImage($iwImage, $request->title);
+        $this->iwImageService->createImage($iwImage, $request->title, $request->color);
     }
 }
 

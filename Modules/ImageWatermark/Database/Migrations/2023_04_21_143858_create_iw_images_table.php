@@ -19,10 +19,6 @@ class CreateIwImagesTable extends Migration
             $table->string('title', 255);
             $table->text('description')->nullable();
             $table->string('image', 255);
-            $table->integer('horizontal')->default(0);
-            $table->integer('vertical')->default(0);
-            $table->integer('font_size')->default(14);
-            $table->boolean('background')->default(0);
             $table->boolean('active')->default(1);
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();

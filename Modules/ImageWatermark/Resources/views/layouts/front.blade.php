@@ -20,8 +20,14 @@
     {{-- <link rel="stylesheet" href="{{ mix('css/imagewatermark.css') }}"> --}}
     <script>
         function confirmDownload(form_id) {
-            if ($(form_id).find('[name="title"]').val().trim() == '') {
-                alert("@lang('imagewatermark::iw.title_required')");
+            let check_error = 0;
+            $(form_id).find('.title').each(function () {
+                if($(this).val().trim() == '') {
+                    check_error = 1;
+                }
+            });
+            if(check_error) {
+                alert("@lang('imagewatermark::iw.content_required')");
             } else {
                 $(form_id).submit();
             }

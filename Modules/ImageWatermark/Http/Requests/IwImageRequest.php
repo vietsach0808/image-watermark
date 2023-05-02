@@ -20,10 +20,14 @@ class IwImageRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'active' => 'required|boolean',
-            'background' => 'required|boolean',
-            'horizontal' => 'required|integer',
-            'vertical' => 'required|integer',
-            'font_size' => 'required|integer',
+            'background' => 'required|array',
+            'horizontal' => 'required|array',
+            'vertical' => 'required|array',
+            'font_size' => 'required|array',
+            'background.*' => 'required|boolean',
+            'horizontal.*' => 'required|integer',
+            'vertical.*' => 'required|integer',
+            'font_size.*' => 'required|integer',
             'image' => $imageRequired . '|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }

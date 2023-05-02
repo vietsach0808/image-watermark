@@ -30,14 +30,19 @@
                                 <form id="download-form-{{ $image->id }}" action="{{ route('iw.download', $image->id) }}"
                                       method="POST">
                                     @csrf
+                                    @foreach($image->content as $imageContent)
                                     <div class="form-group row">
-                                        <label for="description" class="col-sm-2 col-form-label">@lang('imagewatermark::iw.content')</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" name="title"
+                                        <label class="col-sm-2 col-form-label">@lang('imagewatermark::iw.content') {{ $loop->iteration }}</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control title" name="title[{{$imageContent->id}}]"
                                                    placeholder="@lang('imagewatermark::iw.enter_content')"
-                                                   value="{{old('description', isset($iwImage) ? $iwImage->description : '')}}" required>
+                                                   value="{{isset(old('title')[0]) ? old('title')[0] : ''}}" required>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <input style="margin-top: 5px" type="color" name="color[{{$imageContent->id}}]" value="">
                                         </div>
                                     </div>
+                                    @endforeach
                                 </form>
                                 <div class="form-group row">
                                     <img src="{{asset('images/iw/'.$image->image)}}" style="max-width: 200px;padding-left: 15px">
